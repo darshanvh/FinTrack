@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard - Expense Tracker</title>
+
+  <!-- Bootstrap & Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 20px;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    /* Animated background particles */
+    body::before {
+      content: '';
+      position: fixed;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+      background: 
+        radial-gradient(circle at 20% 50%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 80% 80%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 40% 20%, rgba(255, 255, 255, 0.08) 0%, transparent 50%);
+      animation: float 20s ease-in-out infinite;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-20px); }
+    }
+
+    .container {
+      position: relative;
+      z-index: 1;
+      max-width: 1400px;
+    }
+
+    /* Header Section */
+    .header-section {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(20px);
+      border-radius: 24px;
+      padding: 24px 32px;
+      margin-bottom: 32px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 20px;
+      animation: slideDown 0.6s ease-out;
+    }
+
+    @keyframes slideDown {
+      from {
+        opacity: 0;
+        transform: translateY(-30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .welcome-text h1 {
+      font-size: 2rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 4px;
+    }
+
+    .welcome-text p {
+      color: #64748b;
+      font-size: 0.95rem;
+      margin: 0;
+    }
+
+    .profile-section {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      position: relative;
+    }
+
+    .profile-pic {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 3px solid #667eea;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+    }
+
+    .profile-pic:hover {
+      transform: scale(1.05);
+      box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5);
+    }
+
+    .profile-dropdown {
+      position: absolute;
+      top: 70px;
+      right: 0;
+      background: white;
+      border-radius: 16px;
+      padding: 16px;
+      min-width: 280px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+      display: none;
+      z-index: 1000;
+      animation: fadeIn 0.3s ease;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(-10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .profile-dropdown.show {
+      display: block;
+    }
+
+    .profile-info {
+      padding-bottom: 12px;
+      border-bottom: 1px solid #e2e8f0;
+      margin-bottom: 12px;
+    }
+
+    .profile-info p {
+      margin: 6px 0;
+      font-size: 0.9rem;
+      color: #475569;
+    }
+
+    .profile-info strong {
+      color: #1e293b;
+      font-weight: 600;
+    }
+
+    .profile-dropdown a {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 12px;
+      color: #334155;
+      text-decoration: none;
+      border-radius: 10px;
+      transition: all 0.2s ease;
+      font-size: 0.95rem;
+    }
+
+    .profile-dropdown a:hover {
+      background: #f1f5f9;
+      color: #667eea;
+    }
+
+    /* Stats Cards Grid */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 24px;
+      margin-bottom: 32px;
+    }
+
+    .stat-card {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(20px);
+      border-radius: 20px;
+      padding: 28px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      text-decoration: none;
+      color: inherit;
+      display: block;
+      animation: fadeInUp 0.6s ease-out backwards;
+    }
+
+    .stat-card:nth-child(1) { animation-delay: 0.1s; }
+    .stat-card:nth-child(2) { animation-delay: 0.2s; }
+    .stat-card:nth-child(3) { animation-delay: 0.3s; }
+    .stat-card:nth-child(4) { animation-delay: 0.4s; }
+    .stat-card:nth-child(5) { animation-delay: 0.5s; }
+    .stat-card:nth-child(6) { animation-delay: 0.6s; }
+    .stat-card:nth-child(7) { animation-delay: 0.7s; }
+    .stat-card:nth-child(8) { animation-delay: 0.8s; }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .stat-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 4px;
+      background: linear-gradient(90deg, var(--card-color-1), var(--card-color-2));
+    }
+
+    .stat-card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+    }
+
+    .stat-card.blue { --card-color-1: #3b82f6; --card-color-2: #2563eb; }
+    .stat-card.green { --card-color-1: #10b981; --card-color-2: #059669; }
+    .stat-card.purple { --card-color-1: #8b5cf6; --card-color-2: #7c3aed; }
+    .stat-card.orange { --card-color-1: #f59e0b; --card-color-2: #d97706; }
+    .stat-card.pink { --card-color-1: #ec4899; --card-color-2: #db2777; }
+    .stat-card.teal { --card-color-1: #14b8a6; --card-color-2: #0d9488; }
+    .stat-card.indigo { --card-color-1: #6366f1; --card-color-2: #4f46e5; }
+    .stat-card.red { --card-color-1: #ef4444; --card-color-2: #dc2626; }
+
+    .stat-icon {
+      width: 64px;
+      height: 64px;
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+      margin-bottom: 20px;
+      background: linear-gradient(135deg, var(--card-color-1), var(--card-color-2));
+      color: white;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+    }
+
+    .stat-value {
+      font-size: 2rem;
+      font-weight: 800;
+      color: #1e293b;
+      margin-bottom: 8px;
+      line-height: 1;
+    }
+
+    .stat-label {
+      font-size: 0.95rem;
+      color: #64748b;
+      font-weight: 500;
+      margin-bottom: 12px;
+    }
+
+    .stat-detail {
+      font-size: 0.85rem;
+      color: #94a3b8;
+      padding-top: 12px;
+      border-top: 1px solid #e2e8f0;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .header-section {
+        padding: 20px;
+      }
+
+      .welcome-text h1 {
+        font-size: 1.5rem;
+      }
+
+      .stats-grid {
+        grid-template-columns: 1fr;
+        gap: 16px;
+      }
+
+      .stat-card {
+        padding: 20px;
+      }
+
+      .stat-value {
+        font-size: 1.75rem;
+      }
+    }
+
+    /* Loading animation */
+    .loading {
+      opacity: 0;
+      animation: fadeIn 0.5s ease forwards;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Header -->
+    <div class="header-section">
+      <div class="welcome-text">
+        <h1>👋 Welcome back, {{ user.name }}!</h1>
+        <p><i class="bi bi-clock"></i> {{ now.strftime("%A, %B %d, %Y • %I:%M %p") }}</p>
+      </div>
+      <div class="profile-section">
+        <img src="{{ user.photo }}" class="profile-pic" alt="Profile" onclick="toggleDropdown()">
+        <div id="profileDropdown" class="profile-dropdown">
+          <div class="profile-info">
+            <p><strong>Name:</strong> {{ user.name }}</p>
+            <p><strong>Mobile:</strong> {{ user.mobile }}</p>
+            <p><strong>Job:</strong> {{ user.job or 'Not specified' }}</p>
+            <p><strong>Daily Earning:</strong> ₹{{ user.daily_earning or 0 }}</p>
+          </div>
+          <a href="{{ url_for('edit_profile') }}">
+            <i class="bi bi-person-gear"></i> Edit Profile
+          </a>
+          <a href="{{ url_for('logout') }}">
+            <i class="bi bi-box-arrow-right"></i> Logout
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Stats Grid -->
+    <div class="stats-grid">
+      <!-- Income Today -->
+      <a href="{{ url_for('income_page') }}" class="stat-card blue loading">
+        <div class="stat-icon">
+          <i class="bi bi-cash-stack"></i>
+        </div>
+        <div class="stat-value">₹{{ (today_income | sum(attribute='amount')) or 0 }}</div>
+        <div class="stat-label">Income Today</div>
+        <div class="stat-detail">Click to add or view income</div>
+      </a>
+
+      <!-- Expenses Today -->
+      <a href="{{ url_for('expenses_today') }}" class="stat-card red loading">
+        <div class="stat-icon">
+          <i class="bi bi-receipt"></i>
+        </div>
+        <div class="stat-value">₹{{ (expenses_today | sum(attribute='amount')) or 0 }}</div>
+        <div class="stat-label">Expenses Today</div>
+        <div class="stat-detail">Track your daily spending</div>
+      </a>
+
+      <!-- Balance Today -->
+      <a href="{{ url_for('balance_today') }}" class="stat-card green loading">
+        <div class="stat-icon">
+          <i class="bi bi-wallet2"></i>
+        </div>
+        <div class="stat-value">₹{{ (today_income | sum(attribute='amount')) - (expenses_today | sum(attribute='amount')) }}</div>
+        <div class="stat-label">Balance Today</div>
+        <div class="stat-detail">Income: ₹{{ (today_income | sum(attribute='amount')) or 0 }} • Expenses: ₹{{ (expenses_today | sum(attribute='amount')) or 0 }}</div>
+      </a>
+
+      <!-- Monthly Income -->
+      <a href="{{ url_for('monthly_income') }}" class="stat-card purple loading">
+        <div class="stat-icon">
+          <i class="bi bi-graph-up-arrow"></i>
+        </div>
+        <div class="stat-value">₹{{ total_income or 0 }}</div>
+        <div class="stat-label">Monthly Income</div>
+        <div class="stat-detail">Last 30 days earnings</div>
+      </a>
+
+      <!-- Monthly Expenses -->
+      <a href="{{ url_for('monthly_expenses') }}" class="stat-card orange loading">
+        <div class="stat-icon">
+          <i class="bi bi-graph-down"></i>
+        </div>
+        <div class="stat-value">₹{{ total_expenses or 0 }}</div>
+        <div class="stat-label">Monthly Expenses</div>
+        <div class="stat-detail">Last 30 days spending</div>
+      </a>
+
+      <!-- Monthly Balance -->
+      <a href="{{ url_for('last30') }}" class="stat-card teal loading">
+        <div class="stat-icon">
+          <i class="bi bi-piggy-bank"></i>
+        </div>
+        <div class="stat-value">₹{{ balance }}</div>
+        <div class="stat-label">Monthly Balance</div>
+        <div class="stat-detail">Your savings this month</div>
+      </a>
+
+      <!-- All Time Balance -->
+      <a href="{{ url_for('all_time') }}" class="stat-card indigo loading">
+        <div class="stat-icon">
+          <i class="bi bi-infinity"></i>
+        </div>
+        <div class="stat-value">₹{{ ((alltime_income | sum(attribute='amount')) or 0) - ((expenses_alltime | sum(attribute='amount')) or 0) }}</div>
+        <div class="stat-label">All Time Balance</div>
+        <div class="stat-detail">Total: ₹{{ (alltime_income | sum(attribute='amount')) or 0 }} - ₹{{ (expenses_alltime | sum(attribute='amount')) or 0 }}</div>
+      </a>
+
+      <!-- Payments -->
+      <a href="{{ url_for('payments_page') }}" class="stat-card pink loading">
+        <div class="stat-icon">
+          <i class="bi bi-credit-card"></i>
+        </div>
+        <div class="stat-value">{{ 0 if not payments else payments|length }}</div>
+        <div class="stat-label">Payment Items</div>
+        <div class="stat-detail">Manage your payments</div>
+      </a>
+
+      <!-- Repayments -->
+      <a href="{{ url_for('savings_page') }}" class="stat-card orange loading">
+        <div class="stat-icon">
+          <i class="bi bi-arrow-repeat"></i>
+        </div>
+        <div class="stat-value">{{ 0 if not repayments else repayments|length }}</div>
+        <div class="stat-label">Repay Items</div>
+        <div class="stat-detail">Track repayments</div>
+      </a>
+
+      <!-- Track Finances -->
+      <a href="{{ url_for('track_page') }}" class="stat-card blue loading">
+        <div class="stat-icon">
+          <i class="bi bi-bar-chart-line"></i>
+        </div>
+        <div class="stat-value"><i class="bi bi-graph-up"></i></div>
+        <div class="stat-label">Track Finances</div>
+        <div class="stat-detail">View monthly records</div>
+      </a>
+
+      <!-- Monthly Tracker -->
+      <a href="{{ url_for('monthly_tracker') }}" class="stat-card green loading">
+        <div class="stat-icon">
+          <i class="bi bi-calendar-check"></i>
+        </div>
+        <div class="stat-value"><i class="bi bi-calendar3"></i></div>
+        <div class="stat-label">Monthly Tracker</div>
+        <div class="stat-detail">Detailed monthly view</div>
+      </a>
+
+      <!-- Help -->
+      <div class="stat-card purple loading" style="cursor: default;">
+        <div class="stat-icon">
+          <i class="bi bi-question-circle"></i>
+        </div>
+        <div class="stat-value"><i class="bi bi-info-circle"></i></div>
+        <div class="stat-label">Help & Support</div>
+        <div class="stat-detail">We're here to help you</div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    function toggleDropdown() {
+      const dropdown = document.getElementById('profileDropdown');
+      dropdown.classList.toggle('show');
+    }
+
+    // Close dropdown when clicking outside
+    window.addEventListener('click', function(e) {
+      if (!e.target.closest('.profile-section')) {
+        const dropdown = document.getElementById('profileDropdown');
+        dropdown.classList.remove('show');
+      }
+    });
+
+    // Trigger loading animation
+    document.addEventListener('DOMContentLoaded', function() {
+      const cards = document.querySelectorAll('.loading');
+      cards.forEach((card, index) => {
+        setTimeout(() => {
+          card.style.opacity = '1';
+        }, index * 50);
+      });
+    });
+  </script>
+</body>
+</html>

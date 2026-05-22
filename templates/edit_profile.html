@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Edit Profile</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f4f4;
+      padding: 20px;
+    }
+    .card {
+      max-width: 400px;
+      margin: auto;
+      background: #fff;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0px 4px 6px rgba(0,0,0,0.2);
+    }
+    input, button {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+    button {
+      background: #007BFF;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #0056b3;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h2>Edit Profile</h2>
+    <form method="POST">
+      <label>Name</label>
+      <input type="text" name="name" value="{{ user.name }}" required>
+
+      <label>Job</label>
+      <input type="text" name="job" value="{{ user.job }}">
+
+      <label>Daily Earning</label>
+      <input type="number" name="daily_earning" value="{{ user.daily_earning }}" step="0.01">
+
+      <p><strong>Mobile (not editable):</strong> {{ user.mobile }}</p>
+
+      <button type="submit">Save Changes</button>
+    </form>
+  </div>
+</body>
+</html>

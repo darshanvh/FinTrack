@@ -1,0 +1,52 @@
+{% extends "layout.html" %}
+
+{% block title %}Monthly Tracker{% endblock %}
+{% block header %}Monthly Expense Breakdown{% endblock %}
+
+{% block content %}
+    {% if tracker %}
+        <div class="row">
+        {% for category, months in tracker.items() %}
+            <div class="col-xl-6 col-md-12 mb-4">
+                <div class="card h-100">
+                    <div class="card-header bg-white py-3">
+                        <h6 class="m-0 font-weight-bold text-primary">
+                            <i class="fas fa-tag me-2 text-secondary"></i>{{ category }}
+                        </h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-hover mb-0">
+                                <thead class="small text-uppercase text-muted">
+                                    <tr>
+                                        <th>Period</th>
+                                        <th>Amount</th>
+                                        <th class="text-end">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for month_year, amount in months.items() %}
+                                        <tr>
+                                            <td class="fw-medium">{{ month_year }}</td>
+                                            <td class="text-danger fw-bold">₹{{ "{:,.2f}".format(amount) }}</td>
+                                            <td class="text-end">
+                                                <a href="{{ url_for('monthly_expenses') }}" class="btn btn-sm btn-light border">Details</a>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+        </div>
+    {% else %}
+        <div class="text-center py-5">
+            <img src="https://cdn-icons-png.flaticon.com/512/4076/4076432.png" alt="Empty" style="width: 120px; opacity: 0.5;">
+            <h4 class="mt-3 text-muted">No records found</h4>
+            <p>Start adding expenses to see your monthly breakdown.</p>
+        </div>
+    {% endif %}
+{% endblock %}

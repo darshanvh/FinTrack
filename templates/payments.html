@@ -1,0 +1,79 @@
+{% extends "layout.html" %}
+
+{% block title %}Upcoming Payments{% endblock %}
+{% block header %}Payment Manager{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12 mb-4">
+        <div class="card p-4 border-0 shadow-sm">
+            <h5 class="fw-bold mb-4 text-primary"><i class="fas fa-file-invoice-dollar me-2"></i>Schedule a Payment</h5>
+            <form method="POST" class="row g-3">
+                <div class="col-md-3">
+                    <label class="small fw-bold text-muted">Recipient</label>
+                    <input type="text" name="name" class="form-control border-0 bg-light" placeholder="e.g., Rent, Electric Bill" required>
+                </div>
+                <div class="col-md-3">
+                    <label class="small fw-bold text-muted">Amount</label>
+                    <input type="number" step="0.01" name="amount" class="form-control border-0 bg-light" placeholder="0.00" required>
+                </div>
+                <div class="col-md-2">
+                    <label class="small fw-bold text-muted">Due Date</label>
+                    <input type="date" name="date" class="form-control border-0 bg-light">
+                </div>
+                <div class="col-md-2">
+                    <label class="small fw-bold text-muted">Status</label>
+                    <select name="status" class="form-select border-0 bg-light">
+                        <option value="Unpaid" selected>Unpaid</option>
+                        <option value="Paid">Paid</option>
+                    </select>
+                </div>
+                <div class="col-md-2 d-flex align-items-end">
+                    <button type="submit" class="btn btn-primary w-100 py-2">Add Item</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="col-12">
+        <div class="card border-0 shadow-sm">
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="bg-light text-muted small text-uppercase fw-bold">
+                            <tr>
+                                <th class="px-4 py-3">Pay To</th>
+                                <th>Amount</th>
+                                <th>Due Date</th>
+                                <th>Status</th>
+                                <th class="text-end px-4">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% if payments %}
+                                {% for r in payments %}
+                                <tr>
+                                    <td class="px-4 fw-bold">{{ r.name }}<br><small class="text-muted fw-normal">{{ r.purpose or 'Regular Payment' }}</small></td>
+                                    <td class="fw-bold text-dark">₹{{ "{:,.2f}".format(r.amount) }}</td>
+                                    <td>{{ r.date.strftime("%b %d, %Y") }}</td>
+                                    <td>
+                                        <span class="badge rounded-pill {% if r.status == 'Paid' %}bg-success-subtle text-success{% else %}bg-warning-subtle text-warning{% endif %} px-3">
+                                            {{ r.status }}
+                                        </span>
+                                    </td>
+                                    <td class="text-end px-4">
+                                        <a href="{{ url_for('edit_payment', pay_id=r.id) }}" class="btn btn-sm btn-light border rounded-pill px-3">Edit</a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            {% else %}
+                                <tr><td colspan="5" class="text-center py-5 text-muted">No scheduled payments found.</td></tr>
+                            {% endif %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

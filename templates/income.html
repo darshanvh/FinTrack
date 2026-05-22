@@ -1,0 +1,69 @@
+{% extends "layout.html" %}
+
+{% block title %}Daily Income{% endblock %}
+{% block header %}Daily Income – {{ now.strftime('%Y-%m-%d') }}{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-12 mb-4">
+        <div class="card p-4">
+            <h5 class="fw-bold mb-3 text-primary"><i class="fas fa-plus-circle me-2"></i>Add New Income</h5>
+            <form method="POST" class="row g-3">
+                <div class="col-md-5">
+                    <div class="input-group">
+                        <span class="input-group-text bg-light border-0"><i class="fas fa-briefcase text-muted"></i></span>
+                        <input type="text" name="source" class="form-control border-0 bg-light" placeholder="Income Source (e.g. Salary, Freelance)" required>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="input-group">
+                        <span class="input-group-text bg-light border-0"><i class="fas fa-indian-rupee-sign text-muted"></i></span>
+                        <input type="number" name="amount" class="form-control border-0 bg-light" placeholder="Amount" required>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <button type="submit" class="btn btn-primary w-100 py-2 fw-bold">
+                        <i class="fas fa-save me-2"></i>Record Income
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="col-lg-12">
+        <div class="card">
+            <div class="card-header bg-transparent py-3">
+                <h5 class="m-0 fw-bold text-dark"><i class="fas fa-list me-2"></i>Today’s Entries</h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    {% if today_income %}
+                    <table class="table table-hover align-middle">
+                        <thead class="text-uppercase small fw-bold text-muted">
+                            <tr><th>Source</th><th>Amount</th><th class="text-end">Action</th></tr>
+                        </thead>
+                        <tbody>
+                            {% for inc in today_income %}
+                            <tr>
+                                <td class="fw-medium text-dark">{{ inc.source }}</td>
+                                <td class="text-success fw-bold">₹{{ "{:,.2f}".format(inc.amount) }}</td>
+                                <td class="text-end">
+                                    <a href="{{ url_for('edit_income', income_id=inc.id) }}" class="btn btn-sm btn-outline-primary rounded-pill px-3">
+                                        <i class="fas fa-edit me-1"></i> Edit
+                                    </a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                    {% else %}
+                    <div class="text-center py-4">
+                        <p class="text-muted m-0">No income entries recorded today.</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
