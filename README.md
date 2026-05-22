@@ -16,15 +16,15 @@ The application helps users manage:
 
 # 📸 Project Preview
 
-## Homepage
+## login
 
-![Homepage](static/images/home.png)
+![Homepage](images/login)
 
 ---
 
 ## Dashboard
 
-![Dashboard](static/images/dashboard.png)
+![Dashboard](images/dashboard.png)
 
 ---
 
@@ -36,19 +36,19 @@ The application helps users manage:
 
 ## Expense Tracking
 
-![Expenses](static/images/expenses.png)
+![Expenses](images/expenses.png)
 
 ---
 
 ## Payments Page
 
-![Payments](static/images/payments.png)
+![Payments](images/payments.png)
 
 ---
 
 ## Savings Tracker
 
-![Savings](static/images/savings.png)
+![Savings](images/savings.png)
 
 ---
 
