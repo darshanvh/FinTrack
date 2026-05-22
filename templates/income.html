@@ -7,18 +7,18 @@
 <div class="row">
     <div class="col-lg-12 mb-4">
         <div class="card p-4">
-            <h5 class="fw-bold mb-3 text-primary"><i class="fas fa-plus-circle me-2"></i>Add New Income</h5>
+            <h5 class="fw-bold mb-3" style="color: #10b981;"><i class="fas fa-plus-circle me-2"></i>Add New Income</h5>
             <form method="POST" class="row g-3">
                 <div class="col-md-5">
                     <div class="input-group">
-                        <span class="input-group-text bg-light border-0"><i class="fas fa-briefcase text-muted"></i></span>
-                        <input type="text" name="source" class="form-control border-0 bg-light" placeholder="Income Source (e.g. Salary, Freelance)" required>
+                        <span class="input-group-text"><i class="fas fa-briefcase"></i></span>
+                        <input type="text" name="source" class="form-control" placeholder="Income Source (e.g. Salary, Freelance)" required>
                     </div>
                 </div>
                 <div class="col-md-4">
                     <div class="input-group">
-                        <span class="input-group-text bg-light border-0"><i class="fas fa-indian-rupee-sign text-muted"></i></span>
-                        <input type="number" name="amount" class="form-control border-0 bg-light" placeholder="Amount" required>
+                        <span class="input-group-text"><i class="fas fa-indian-rupee-sign"></i></span>
+                        <input type="number" name="amount" class="form-control" placeholder="Amount" required>
                     </div>
                 </div>
                 <div class="col-md-3">
@@ -33,20 +33,20 @@
     <div class="col-lg-12">
         <div class="card">
             <div class="card-header bg-transparent py-3">
-                <h5 class="m-0 fw-bold text-dark"><i class="fas fa-list me-2"></i>Today’s Entries</h5>
+                <h5 class="m-0 fw-bold text-white"><i class="fas fa-list me-2"></i>Today’s Entries</h5>
             </div>
             <div class="card-body">
                 <div class="table-responsive">
                     {% if today_income %}
                     <table class="table table-hover align-middle">
-                        <thead class="text-uppercase small fw-bold text-muted">
+                        <thead class="text-uppercase small fw-bold">
                             <tr><th>Source</th><th>Amount</th><th class="text-end">Action</th></tr>
                         </thead>
                         <tbody>
                             {% for inc in today_income %}
                             <tr>
-                                <td class="fw-medium text-dark">{{ inc.source }}</td>
-                                <td class="text-success fw-bold">₹{{ "{:,.2f}".format(inc.amount) }}</td>
+                                <td class="fw-medium">{{ inc.source }}</td>
+                                <td class="fw-bold" style="color: #10b981;">₹{{ "{:,.2f}".format(inc.amount) }}</td>
                                 <td class="text-end">
                                     <a href="{{ url_for('edit_income', income_id=inc.id) }}" class="btn btn-sm btn-outline-primary rounded-pill px-3">
                                         <i class="fas fa-edit me-1"></i> Edit

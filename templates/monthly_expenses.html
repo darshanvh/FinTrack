@@ -1,89 +1,103 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Last 30 Days Expenses</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-</head>
-<body class="p-4 bg-light">
-  <div class="container">
-    <div class="d-flex justify-content-between align-items-center mb-3">
-      <div>
-        <h2 class="mb-0">Last 30 Days Expenses</h2>
-        <small class="text-muted">{{ start_date.strftime("%Y-%m-%d") }} → {{ end_date.strftime("%Y-%m-%d") }}</small>
-      </div>
-      <a href="{{ url_for('dashboard') }}" class="btn btn-secondary">← Back to Dashboard</a>
+{% extends "layout.html" %}
+
+{% block title %}Monthly Expenses{% endblock %}
+{% block header %}Monthly Expense Overview{% endblock %}
+
+{% block content %}
+<div class="row">
+    <!-- Chart Section -->
+    <div class="col-12 mb-4">
+        <div class="card p-4">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h5 class="fw-bold m-0" style="color: #3b82f6;">
+                    <i class="fas fa-chart-area me-2"></i>Expense Trend (Last 30 Days)
+                </h5>
+                <small class="text-secondary">{{ start_date.strftime("%Y-%m-%d") }} — {{ end_date.strftime("%Y-%m-%d") }}</small>
+            </div>
+            <canvas id="expensesChart" height="100"></canvas>
+        </div>
     </div>
 
-    <!-- Chart -->
-    <div class="card mb-4">
-      <div class="card-body">
-        <canvas id="expensesChart" height="100"></canvas>
-      </div>
+    <!-- Expenses Table Section -->
+    <div class="col-12">
+        <div class="card p-4">
+            <h5 class="fw-bold mb-4 text-white">
+                <i class="fas fa-history me-2"></i>Expense Records
+            </h5>
+            <div class="table-responsive">
+                <table class="table table-hover align-middle">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Category</th>
+                            <th>Amount (₹)</th>
+                            <th class="text-end">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% if expenses %}
+                            {% for e in expenses %}
+                            <tr>
+                                <td class="text-secondary">{{ e.date.strftime("%Y-%m-%d") }}</td>
+                                <td class="fw-medium">{{ e.category }}</td>
+                                <td class="fw-bold text-danger">₹{{ "{:,.2f}".format(e.amount or 0) }}</td>
+                                <td class="text-end">
+                                    <a href="{{ url_for('edit_expense', expense_id=e.id) }}" class="btn btn-sm btn-outline-primary rounded-pill px-3 me-1">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    <a href="{{ url_for('delete_expense', id=e.id) }}" class="btn btn-sm btn-outline-danger rounded-pill px-3" onclick="return confirm('Delete this record?')">
+                                        <i class="fas fa-trash"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        {% else %}
+                            <tr><td colspan="4" class="text-center py-4 text-muted">No expenses recorded in the last 30 days.</td></tr>
+                        {% endif %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
+</div>
 
-    <!-- Expenses Table -->
-    <h4>Expenses Records</h4>
-    <table class="table table-bordered table-striped">
-      <thead class="table-dark">
-        <tr>
-          <th>Date</th>
-          <th>Source</th>
-          <th>Amount (₹)</th>
-          <th>Actions</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% if expenses %}
-          {% for e in expenses %}
-            <tr>
-              <td>{{ e.date.strftime("%Y-%m-%d") }}</td>
-              <td>{{ e.category }}</td>
-              <td>{{ "%.2f"|format(e.amount or 0) }}</td>
-              <td>
-                <!-- Edit -->
-                <a href="{{ url_for('edit_expense', expense_id=e.id) }}" class="btn btn-sm btn-warning">Edit</a>
-                <!-- Delete -->
-                <a href="{{ url_for('delete_expense', id=e.id) }}" class="btn btn-sm btn-danger">Delete</a>
-
-              </td>
-            </tr>
-          {% endfor %}
-        {% else %}
-          <tr><td colspan="4" class="text-center text-muted">No expenses in the last 30 days.</td></tr>
-        {% endif %}
-      </tbody>
-    </table>
-
-    <a href="{{ url_for('dashboard') }}" class="btn btn-secondary mt-3">Back to Dashboard</a>
-  </div>
-
-  <script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
     const chartData = {{ chart_data | safe }};
     const ctx = document.getElementById('expensesChart').getContext('2d');
 
     new Chart(ctx, {
-      type: 'line',
-      data: {
-        labels: chartData.map(d => d.date),
-        datasets: [{
-          label: 'Expenses (₹)',
-          data: chartData.map(d => d.amount),
-          borderColor: 'red',
-          backgroundColor: 'rgba(255, 0, 0, 0.2)',
-          fill: true,
-          tension: 0.3
-        }]
-      },
-      options: {
-        responsive: true,
-        scales: {
-          y: { beginAtZero: true }
+        type: 'line',
+        data: {
+            labels: chartData.map(d => d.date),
+            datasets: [{
+                label: 'Expenses (₹)',
+                data: chartData.map(d => d.amount),
+                borderColor: '#3b82f6',
+                backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                fill: true,
+                tension: 0.4,
+                borderWidth: 3,
+                pointBackgroundColor: '#3b82f6'
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: { display: false }
+            },
+            scales: {
+                y: { 
+                    beginAtZero: true,
+                    grid: { color: 'rgba(255, 255, 255, 0.05)' },
+                    ticks: { color: '#94a3b8' }
+                },
+                x: {
+                    grid: { display: false },
+                    ticks: { color: '#94a3b8' }
+                }
+            }
         }
-      }
     });
-  </script>
-</body>
-</html>
+</script>
+{% endblock %}
